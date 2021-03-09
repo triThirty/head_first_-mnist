@@ -1,0 +1,80 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: torchserve
+  labels:
+    app: torchserve
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '8082'
+spec:
+  ports:
+  - name: preds
+    port: {{ .Values.torchserve.inference_port }}
+    targetPort: ts 
+  - name: mdl
+    port: {{ .Values.torchserve.management_port }}
+    targetPort: ts-management
+  - name: metrics
+    port: {{ .Values.torchserve.metrics_port }}
+    targetPort: ts-metrics
+  type: ClusterIP
+  selector:
+    app: torchserve
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: torchserve
+  annotations:
+    cert-manager.io/cluster-issuer: dnspod-issuer
+spec:
+  rules:
+    - host: {{ .Values.torchingress.host }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: torchserve
+              servicePort: 8080
+          - path: /metrics
+            backend:
+              serviceName: torchserve
+              servicePort: 8081
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: torchserve
+  labels:
+    app: torchserve
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: torchserve
+  template:
+    metadata:
+      labels:
+        app: torchserve
+    spec:
+      containers:
+      - name: torchserve
+        image: {{ .Values.torchserve_image }}
+        ports:
+        - name: ts
+          containerPort: {{ .Values.torchserve.inference_port }}
+        - name: ts-management
+          containerPort: {{ .Values.torchserve.management_port }}
+        - name: ts-metrics
+          containerPort: {{ .Values.torchserve.metrics_port }}
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: {{ .Values.torchserve.n_cpu }}
+            memory: {{ .Values.torchserve.memory_limit }}
+            nvidia.com/gpu: {{ .Values.torchserve.n_gpu }}
+          requests:
+            cpu: {{ .Values.torchserve.n_cpu }}
+            memory: {{ .Values.torchserve.memory_request }}
