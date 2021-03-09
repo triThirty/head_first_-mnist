@@ -8,8 +8,12 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.service.target_port }}
       protocol: TCP
       name: http
+    - port: {{ .Values.service.metrics_port }}
+      targetPort: {{ .Values.service.metrics_target_port }}
+      protocol: TCP
+      name: metrics
   selector:
     {{- include "mnist_chart.selectorLabels" . | nindent 4 }}

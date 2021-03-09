@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: mnist
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "v0.1.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -38,7 +38,10 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
+  target_port: 8080
+  metrics_port: 8081
+  metrics_target_port: 8081
 
 ingress:
   enabled: false
@@ -47,7 +50,13 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: chart-example.local
-      paths: []
+      paths:
+        - path: /
+          fullName: {{ include "mnist_chart.fullname" . }}
+          servicePort: 8080
+        - path: /metrics
+          fullName: {{ include "mnist_chart.fullname" . }}
+          servicePort: 8081
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
