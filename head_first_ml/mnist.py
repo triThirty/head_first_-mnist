@@ -43,7 +43,7 @@ class NeuralNetwork(nn.Module):
 
 model = NeuralNetwork()
 # optimizer = optim.SGD(params=model.parameters(), lr=0.01)
-optimizer = optim.Adam(params=model.parameters(), lr=0.001) # Change grade desend function from SGD to Adam
+optimizer = optim.Adam(params=model.parameters()) # Change grade desend function from SGD to Adam
 
 def train(epoch):
     for batch_idx, (data, target) in enumerate(data_loader_train): 
@@ -85,3 +85,4 @@ if __name__ == '__main__':
         print("test num"+str(epoch))
         train(epoch)
         test()
+    torch.save(model.state_dict(), "mnist_cnn.pt")
