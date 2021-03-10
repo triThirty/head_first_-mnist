@@ -89,10 +89,12 @@ Then we run `helm lint mnist_chart` to check the syntax.
 Use `helm package mnist_chart` to pack our chart, it will generate mnist-chart-0.1.tgz on current directory.
 
 Use `helm install mnist-chart-0.1.tgz --generate-name` to deploy a release on current kubernetes cluster.
+
 ![sigmoid](./img/helm_list.png)
 
 ### Test
 In helm chart, I use the host name `test.mnist.com`, so first we need change the hosts file, make `test.mnist.com` can be resolve to our ingress IP.
+
 ![sigmoid](./img/ingress.png)
 
 In test_data directory, I put the test data which is handwritten number zero.
@@ -100,4 +102,5 @@ In test_data directory, I put the test data which is handwritten number zero.
 Use `curl http://test.mnist-tmp.com/predictions/mnist -T test_data/0.png`
 
 We get `0` as response.
+
 ![sigmoid](./img/torchserve.png)
