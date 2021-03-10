@@ -1,4 +1,4 @@
-torchserve_image: mnist:v0.1.0
+torchserve_image: hub.meiqia.com/k8s/mnist:v0.1.0
 
 namespace: torchserve
 
@@ -12,7 +12,7 @@ torchserve:
   memory_request: 1Gi
 
 torchingress:
-  host: test.mnist.com
+  host: test.mnist-tmp.com
 
 deployment:
   replicas: 1
