@@ -111,3 +111,12 @@ One is hostPort, which opens a port on host and out traffic can go into cluster 
 Another is nodePort, which is similar with hostPort but is restricted to ports between port 30000 to 33000.
 Then is Loadbalancer, generally is provided by cloud. Cloud will give lb a public IP, and through this IP, the traffic can reach the inner service.
 The next is ingress, different from Loadbalancer, ingress can have it's own rules to allocate the traffic. Ingress need ingress-controller to really allocate the traffic, and ingress as one kind of Kubernetes resources is used to define the routing rules. ingress-controller in Kubernetes cluster is running as pod, and through service to receive traffic. Generally, on cloud, the ingress-controller service type is loadbalancer, and for self-maintaining cluster, the hostPort type is a good choice. 
+
+
+### About Kubernetes
+- Apiserver: the only component which can communicate with etcd, and it also provides authrization and authentication. If manifest file has syntax errors or version errors, apiserver can also prompt it.
+- Scheduler: select the best fit node to deploy pod.
+- kubelet: deploy the pod, and integrate with cAdvisor which provides REST APIs for monitor system.
+- etcd: store all the cluster info, and can only be accessed by Apiserver.
+- kube-proxy: routing the traffic on work node, generally implemented by iptables or IPVS.
+- controller-manager: include replicate controller, deployment controller, service controller and etc , when the resource conditions are different from the expecting, these controllers will fix them up.
