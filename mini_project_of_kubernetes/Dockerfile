@@ -1,4 +1,4 @@
-FROM docker pull pytorch/torchserve:0.3.0-cpu
+FROM pytorch/torchserve:0.3.0-cpu
 
 ADD mnist_cnn.pt /tmp/
 ADD mnist_handler.py /tmp/
