@@ -75,14 +75,14 @@ RUN torch-model-archiver --model-name mnist --version 1.0 --model-file /tmp/mnis
 
 CMD ["torchserve", "--start", "--model-store", "/tmp/models", "--models", "mnist=mnist.mar"]
 ```
-Two things had be done in Dockerfile.
+Two things had been done in Dockerfile.
 - One is to use torch-model-archiver to generate mnist.mar.
 - Two is to set CMD to run torchserve.
 
 Then run `docker build -t mnist:v0.1.0 .`, we get a TorchServe image where mnist model runs.
 
 ### Generate Helm chart
-For mnist TorchServe, I use ingress to export the inner service which includes 8080 and 8081 port. For 8080, it's use as REST based inference. For 8081, it's use as metrics APIs which can be used by Promethues.
+For mnist TorchServe, I use ingress to export the inner service which includes 8080 and 8081 port. For 8080, it's used as REST based inference. For 8081, it's used as metrics APIs which can be used by Promethues.
 
 Then we run `helm lint mnist_chart` to check the syntax.
 
@@ -104,3 +104,10 @@ Use `curl http://test.mnist-tmp.com/predictions/mnist -T test_data/0.png`
 We get `0` as response.
 
 ![sigmoid](./img/torchserve.png)
+
+### About Ingress
+In Kubernetes, there are 4 ways to export the inner services to the public.
+One is hostPort, which opens a port on host and out traffic can go into cluster through the host's IP and port.
+Another is nodePort, which is similar with hostPort but is restricted to ports between port 30000 to 33000.
+Then is Loadbalancer, generally is provided by cloud. Cloud will give lb a public IP, and through this IP, the traffic can reach the inner service.
+The next is ingress, different from Loadbalancer, ingress can have it's own rules to allocate the traffic. Ingress need ingress-controller to really allocate the traffic, and ingress as one kind of Kubernetes resources is used to define the routing rules. ingress-controller in Kubernetes cluster is running as pod, and through service to receive traffic. Generally, on cloud, the ingress-controller service type is loadbalancer, and for self-maintaining cluster, the hostPort type is a good choice. 
